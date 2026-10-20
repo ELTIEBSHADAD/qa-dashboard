@@ -4,4 +4,4 @@ plotly
 scikit-learn
 scipy
 statsmodels
-google-generativeai
+google-genai
