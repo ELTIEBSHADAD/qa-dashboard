@@ -141,7 +141,12 @@ if st.button("🚀 تشغيل المقارنة مع الذكاء الاصطنا�
             sample_df = df.head(5).copy()
             
             # تطبيق التصنيف على كل نص
-            sample_df['llm_label'] = sample_df['text'].apply(lambda x: classify_with_llm(x, api_key))
+                        import time
+            llm_labels = []
+            for text in sample_df['text']:
+                llm_labels.append(classify_with_llm(text, api_key))
+                time.sleep(1) # انتظر ثانية واحدة بين كل نص
+            sample_df['llm_label'] = llm_labels
             
             st.success("✅ اكتمل التصنيف!")
             
