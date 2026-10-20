@@ -135,16 +135,15 @@ if st.button("🚀 تشغيل المقارنة مع الذكاء الاصطنا�
     if not api_key:
         st.warning("الرجاء إدخال مفتاح API أولاً.")
     else:
-        with st.spinner("جاري تصنيف النصوص بواسطة Gemini... (قد يستغرق 10 ثوانٍ)"):
-            # نأخذ عينة من أول 5 نصوص لتوفير الوقت في التجربة
+        with st.spinner("جاري تصنيف النصوص بواسطة Gemini... (قد يستغرق 30 ثانية)"):
+            import time
             sample_df = df.head(5).copy()
             
-            # تطبيق التصنيف على كل نص
-                        import time
             llm_labels = []
             for text in sample_df['text']:
                 llm_labels.append(classify_with_llm(text, api_key))
-                time.sleep(1) # انتظر ثانية واحدة بين كل نص
+                time.sleep(1)
+            
             sample_df['llm_label'] = llm_labels
             
             st.success("✅ اكتمل التصنيف!")
@@ -165,6 +164,6 @@ if st.button("🚀 تشغيل المقارنة مع الذكاء الاصطنا�
             col2.metric("Cohen's Kappa", f"{kappa:.2f}")
             
             if agreement >= 0.8:
-                st.success("🎉 الذكاء الاصطناعي يتفق معك بشكل ممتاز! (يصلح كمساعد لك).")
+                st.success("🎉 الذكاء الاصطناعي يتفق معك بشكل ممتاز!")
             else:
-                st.warning("⚠️ الذكاء الاصطناعي يختلف معك كثيرًا. قد تحتاج إلى إرشادات أوضح، أو أن النموذج غير مدرب جيدًا على هذا النوع من النصوص.")
+                st.warning("⚠️ الذكاء الاصطناعي يختلف معك. راجع الإرشادات أو جرب نموذجًا آخر.")
