@@ -1,5 +1,7 @@
 import google.generativeai as genai
-
+for m in genai.list_models():
+    if 'generateContent' in m.supported_generation_methods:
+        print(m.name)
 def classify_with_llm(text, api_key):
     try:
         genai.configure(api_key=api_key)
