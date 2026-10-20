@@ -6,7 +6,6 @@ from alert_engine import check_alerts
 import os
 from stats_engine import calculate_statistics
 from llm_classifier import classify_with_llm
-from sklearn.metrics import cohen_kappa_score
 # ==========================================
 # 1. قراءة البيانات (بمسار ديناميكي)
 # ==========================================
