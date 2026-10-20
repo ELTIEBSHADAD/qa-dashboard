@@ -5,6 +5,8 @@ from sklearn.metrics import cohen_kappa_score
 from alert_engine import check_alerts
 import os
 from stats_engine import calculate_statistics
+from llm_classifier import classify_with_llm
+from sklearn.metrics import cohen_kappa_score
 # ==========================================
 # 1. قراءة البيانات (بمسار ديناميكي)
 # ==========================================
@@ -121,3 +123,44 @@ fig_bias = px.bar(stats['bias_data'], barmode='group',
                   labels={'value': 'النسبة', 'index': 'التصنيف'},
                   title="هل يُفرط النموذج في توقع فئة معينة؟")
 st.plotly_chart(fig_bias, use_container_width=True)
+# ==========================================
+# 11. اتفاق الإنسان-الآلة (Human-AI Agreement)
+# ==========================================
+st.markdown("---")
+st.header("🤖 اتفاق الإنسان-الآلة (GPT vs You)")
+st.write("أدخل مفتاح Google Gemini API ليقوم الذكاء الاصطناعي بتصنيف نفس النصوص، ومقارنة أدائه بتصنيفك البشري.")
+
+api_key = st.text_input("أدخل Google API Key هنا (لن يتم تخزينه):", type="password")
+
+if st.button("🚀 تشغيل المقارنة مع الذكاء الاصطناعي"):
+    if not api_key:
+        st.warning("الرجاء إدخال مفتاح API أولاً.")
+    else:
+        with st.spinner("جاري تصنيف النصوص بواسطة Gemini... (قد يستغرق 10 ثوانٍ)"):
+            # نأخذ عينة من أول 5 نصوص لتوفير الوقت في التجربة
+            sample_df = df.head(5).copy()
+            
+            # تطبيق التصنيف على كل نص
+            sample_df['llm_label'] = sample_df['text'].apply(lambda x: classify_with_llm(x, api_key))
+            
+            st.success("✅ اكتمل التصنيف!")
+            
+            # عرض النتائج
+            st.subheader("📋 النتائج التفصيلية")
+            st.dataframe(sample_df[['text', 'my_label', 'llm_label']], use_container_width=True)
+            
+            # حساب الاتفاق
+            agreement = (sample_df['my_label'] == sample_df['llm_label']).mean()
+            try:
+                kappa = cohen_kappa_score(sample_df['my_label'], sample_df['llm_label'])
+            except:
+                kappa = 0.0
+                
+            col1, col2 = st.columns(2)
+            col1.metric("نسبة الاتفاق (Agreement)", f"{agreement:.1%}")
+            col2.metric("Cohen's Kappa", f"{kappa:.2f}")
+            
+            if agreement >= 0.8:
+                st.success("🎉 الذكاء الاصطناعي يتفق معك بشكل ممتاز! (يصلح كمساعد لك).")
+            else:
+                st.warning("⚠️ الذكاء الاصطناعي يختلف معك كثيرًا. قد تحتاج إلى إرشادات أوضح، أو أن النموذج غير مدرب جيدًا على هذا النوع من النصوص.")
