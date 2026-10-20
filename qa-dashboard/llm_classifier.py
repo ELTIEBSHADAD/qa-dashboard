@@ -1,27 +1,8 @@
-import google.generativeai as genai
-for m in genai.list_models():
-    if 'generateContent' in m.supported_generation_methods:
-        print(m.name)
+from google import genai
+
 def classify_with_llm(text, api_key):
     try:
-        genai.configure(api_key=api_key)
-        
-        # --- اختيار النموذج تلقائيًا ---
-        selected_model = None
-        # نبحث عن أول نموذج يدعم generateContent (مثل flash أو pro)
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                # نفضل نماذج flash لأنها أسرع وأرخص، وإلا نأخذ أول نموذج متاح
-                if 'flash' in m.name.lower():
-                    selected_model = m.name
-                    break
-                elif selected_model is None:
-                    selected_model = m.name
-        
-        if not selected_model:
-            return "Error: No suitable Gemini model found for this API key."
-            
-        model = genai.GenerativeModel(selected_model)
+        client = genai.Client(api_key=api_key)
         
         prompt = f"""
         You are an expert sentiment analyzer. Classify the following text into exactly one of these English categories:
@@ -35,7 +16,11 @@ def classify_with_llm(text, api_key):
         Text: {text}
         """
         
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt
+        )
+        
         result = response.text.strip().lower()
         
         if 'positive' in result: return 'positive'
