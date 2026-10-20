@@ -4,7 +4,7 @@ def classify_with_llm(text, api_key):
     try:
         genai.configure(api_key=api_key)
         # استخدام النموذج السريع والمجاني
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = f"""
         You are an expert sentiment analyzer. Classify the following text into exactly one of these English categories:
