@@ -94,3 +94,30 @@ daily_acc = df.groupby('date').apply(
 fig3 = px.line(daily_acc, x='date', y='accuracy', markers=True, title="Model Accuracy Over Time")
 fig3.update_yaxes(tickformat='.0%')
 st.plotly_chart(fig3, use_container_width=True)
+# ==========================================
+# 10. التحليل الإحصائي المتقدم
+# ==========================================
+st.markdown("---")
+st.header("🧮 التحليل الإحصائي المتقدم")
+stats = calculate_statistics(df)
+
+col_stat1, col_stat2 = st.columns(2)
+
+with col_stat1:
+    st.subheader("🎯 فترات الثقة (95%)")
+    st.metric("دقة النموذج", f"{stats['accuracy']:.1%}")
+    st.info(f"نحن واثقون بنسبة 95% أن الدقة الحقيقية للنموذج تقع بين **{stats['ci_low']:.1%}** و **{stats['ci_high']:.1%}**.")
+
+with col_stat2:
+    st.subheader("⚖️ اختبار التحيز (Chi-Square)")
+    st.metric("P-Value", f"{stats['p_value']:.4f}")
+    if stats['p_value'] < 0.05:
+        st.error("⚠️ النموذج **منحاز إحصائياً** (الفرق بين توزيعه وتوزيعك حقيقي وليس صدفة).")
+    else:
+        st.success("✅ لا يوجد انحياز إحصائي دال (توزيع النموذج متوازن مع توزيعك).")
+
+st.subheader("📊 مقارنة التوزيعات (أنت vs النموذج)")
+fig_bias = px.bar(stats['bias_data'], barmode='group', 
+                  labels={'value': 'النسبة', 'index': 'التصنيف'},
+                  title="هل يُفرط النموذج في توقع فئة معينة؟")
+st.plotly_chart(fig_bias, use_container_width=True)
