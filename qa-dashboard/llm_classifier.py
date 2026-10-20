@@ -32,7 +32,7 @@ def classify_with_llm(text, api_key, max_retries=3):
         except Exception as e:
             if attempt == max_retries - 1:
                 return f"Error: {str(e)}"
-            # انتظر ثانيتين قبل المحاولة مرة أخرى
-            time.sleep(2)
+            # انتظر 5 ثوانٍ قبل المحاولة مرة أخرى
+            time.sleep(5) 
     
     return "Error: Max retries exceeded"
