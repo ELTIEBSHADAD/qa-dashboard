@@ -6,6 +6,8 @@ from alert_engine import check_alerts
 import os
 from stats_engine import calculate_statistics
 from llm_classifier import classify_with_llm
+from peer_review_engine import simulate_and_evaluate_peers
+from benchmark_engine import benchmark_models
 # ==========================================
 # 1. قراءة البيانات (بمسار ديناميكي)
 # ==========================================
