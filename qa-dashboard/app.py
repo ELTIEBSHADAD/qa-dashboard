@@ -206,23 +206,39 @@ st.write("يقارن هذا القسم بين أداء نموذجين (نموذ�
 
 if st.button("⚔️ تشغيل مقارنة النماذج"):
     # نستخدم التصنيف البشري كمعيار
-    if 'llm_label' in df.columns:
-        bench_results, error = benchmark_models(df, model_a_col='my_label', model_b_col='llm_label')
-        
-        if error:
-            st.warning(error)
-        else:
-            st.success("✅ اكتملت المقارنة!")
-            col1, col2 = st.columns(2)
-            col1.metric("دقة النموذج A (البشري)", f"{bench_results['model_a_acc']:.1%}")
-            col2.metric("دقة النموذج B (المحاكي)", f"{bench_results['model_b_acc']:.1%}")
-            
-            st.subheader("📊 اختبار McNemar")
-            st.metric("P-Value", f"{bench_results['p_value']:.4f}")
-            
-            if bench_results['p_value'] < 0.05:
-                st.success("🎉 الفرق دال إحصائيًا! النموذج B أفضل فعلاً وليس صدفة.")
-            else:
-                st.info("🤔 لا يوجد فرق دال إحصائيًا. الفرق قد يكون مجرد صدفة.")
+    # ==========================================
+# 13. مقارنة النماذج (Multi-LLM Benchmarking)
+# ==========================================
+st.markdown("---")
+st.header("⚔️ مقارنة النماذج (McNemar Test)")
+st.write("يقارن هذا القسم بين أداء نموذجين (تصنيفك البشري vs نموذج ذكاء اصطناعي) باستخدام **اختبار McNemar** لمعرفة إن كان الفرق بينهما دالًا إحصائيًا أم مجرد صدفة.")
+
+if st.button("⚔️ تشغيل مقارنة النماذج"):
+    # إذا لم يوجد عمود llm_label، نقوم بمحاكاة نموذج ذكاء اصطناعي
+    if 'llm_label' not in df.columns:
+        st.info("ℹ️ لم يتم تشغيل الذكاء الاصطناعي بعد. سيتم محاكاة نموذج ذكاء اصطناعي (دقة 85%) لمقارنته معك.")
+        import random
+        labels = ['positive', 'negative', 'neutral', 'mixed']
+        df['llm_label'] = [
+            true_label if random.random() < 0.85 else random.choice(labels)
+            for true_label in df['my_label']
+        ]
+    
+    # الآن نقوم بتشغيل المقارنة
+    bench_results, error = benchmark_models(df, model_a_col='my_label', model_b_col='llm_label')
+    
+    if error:
+        st.warning(error)
     else:
-        st.warning("الرجاء تشغيل قسم الذكاء الاصطناعي أولاً لإنشاء عمود llm_label.")
+        st.success("✅ اكتملت المقارنة!")
+        col1, col2 = st.columns(2)
+        col1.metric("دقة النموذج A (البشري)", f"{bench_results['model_a_acc']:.1%}")
+        col2.metric("دقة النموذج B (المحاكي)", f"{bench_results['model_b_acc']:.1%}")
+        
+        st.subheader("📊 اختبار McNemar")
+        st.metric("P-Value", f"{bench_results['p_value']:.4f}")
+        
+        if bench_results['p_value'] < 0.05:
+            st.success("🎉 الفرق دال إحصائيًا! النموذج B أفضل فعلاً وليس صدفة.")
+        else:
+            st.info("🤔 لا يوجد فرق دال إحصائيًا. الفرق قد يكون مجرد صدفة.")
