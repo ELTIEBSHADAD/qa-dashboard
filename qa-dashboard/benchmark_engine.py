@@ -27,8 +27,14 @@ def benchmark_models(df, model_a_col='my_label', model_b_col='llm_label'):
     if len(valid_df) < 2:
         return None, "نحتاج إلى عينتين ناجحتين على الأقل للمقارنة. تأكد من أن البيانات تحتوي على تصنيفات صحيحة."
         
-    model_a_preds = valid_df[model_a_col].tolist() 
-    true_labels = valid_df[model_a_col].tolist()  
+    # المعيار الذهبي هو تصنيفك البشري
+true_labels = valid_df['my_label'].tolist()
+
+# النموذج A: محاكاة ذكاء اصطناعي بدقة 75%
+model_a_preds = [
+    t if random.random() < 0.75 else random.choice(['positive', 'negative', 'neutral', 'mixed'])
+    for t in true_labels
+]
     
     # محاكاة النموذج B (دقة 90%)
     model_b_preds = []
