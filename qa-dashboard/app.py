@@ -195,7 +195,7 @@ if st.button("👥 تشغيل محاكاة مراجعة الأقران"):
             st.error(f"⚠️ المُقيّم **{annotator}** غير موثوق! دقته {acc:.1%} فقط. يجب استبعاده.")
             
     st.subheader("📋 عينة من تصنيفات المُقيّمين")
-    st.dataframe(sim_df[['item_id', 'Annotator_1 (You)', 'Annotator_2', 'Annotator_4 (Weak)']].head(), use_container_width=True)
+    st.dataframe(sim_df[['item_id', 'Annotator_1 (You)', 'Annotator_2', 'Annotator_5']].head(), use_container_width=True)
 
 # ==========================================
 # 13. مقارنة النماذج (Multi-LLM Benchmarking)
