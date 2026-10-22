@@ -202,15 +202,6 @@ if st.button("👥 تشغيل محاكاة مراجعة الأقران"):
 # ==========================================
 st.markdown("---")
 st.header("⚔️ مقارنة النماذج (McNemar Test)")
-st.write("يقارن هذا القسم بين أداء نموذجين (نموذج A ونموذج B) باستخدام **اختبار McNemar** لمعرفة إن كان الفرق بينهما دالًا إحصائيًا أم مجرد صدفة.")
-
-if st.button("⚔️ تشغيل مقارنة النماذج"):
-    # نستخدم التصنيف البشري كمعيار
-    # ==========================================
-# 13. مقارنة النماذج (Multi-LLM Benchmarking)
-# ==========================================
-st.markdown("---")
-st.header("⚔️ مقارنة النماذج (McNemar Test)")
 st.write("يقارن هذا القسم بين أداء نموذجين (تصنيفك البشري vs نموذج ذكاء اصطناعي) باستخدام **اختبار McNemar** لمعرفة إن كان الفرق بينهما دالًا إحصائيًا أم مجرد صدفة.")
 
 if st.button("⚔️ تشغيل مقارنة النماذج"):
@@ -218,9 +209,9 @@ if st.button("⚔️ تشغيل مقارنة النماذج"):
     if 'llm_label' not in df.columns:
         st.info("ℹ️ لم يتم تشغيل الذكاء الاصطناعي بعد. سيتم محاكاة نموذج ذكاء اصطناعي (دقة 85%) لمقارنته معك.")
         import random
-        labels = ['positive', 'negative', 'neutral', 'mixed']
+        labels_list = ['positive', 'negative', 'neutral', 'mixed']
         df['llm_label'] = [
-            true_label if random.random() < 0.85 else random.choice(labels)
+            true_label if random.random() < 0.85 else random.choice(labels_list)
             for true_label in df['my_label']
         ]
     
