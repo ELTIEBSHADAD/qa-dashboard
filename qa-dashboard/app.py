@@ -187,7 +187,7 @@ if st.button("👥 تشغيل محاكاة مراجعة الأقران"):
     
     # عرض دقة كل مُقيّم
     rel_df = pd.DataFrame(list(reliability.items()), columns=['المُقيّم', 'نسبة الدقة (مقابل المعيار)'])
-    st.dataframe(rel_df.style.background_gradient(cmap='RdYlGn'), use_container_width=True)
+    st.dataframe(rel_df, use_container_width=True)
     
     # اكتشاف غير الموثوق
     for annotator, acc in reliability.items():
