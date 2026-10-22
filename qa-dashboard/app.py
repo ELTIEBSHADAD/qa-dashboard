@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from skearn.metrics import cohen_kappa_score
+from sklearn.metrics import cohen_kappa_score
 from alert_engine import check_alerts
 import os
 from state_engine import calculate_statistics
