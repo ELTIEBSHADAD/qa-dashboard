@@ -138,7 +138,36 @@ if st.button("👥 تشغيل محاكاة مراجعة الأقران"):
             st.error(f"⚠️ المُقيّم **{annotator}** غير موثوق!")
     st.subheader("📋 عينة من تصنيفات المُقيّمين")
     st.dataframe(sim_df[['item_id', 'Annotator_1 (You)', 'Annotator_2', 'Annotator_5']].head(), use_container_width=True)
+# ==========================================
+# 14. تحليل الجوانب (Aspect-Based Sentiment Analysis)
+# ==========================================
+st.markdown("---")
+st.header("🎯 تحليل الجوانب (ABSA) - متقدم")
+st.write("يقوم هذا القسم بتفكيك النص إلى جوانب (مثل: الطعام، الخدمة) وتحديد مشاعر كل جانب على حدة.")
 
+absa_text = st.text_input("أدخل نصاً لتحليله (مثال: Food is good but service is bad):", key="absa_input")
+
+if st.button("🔍 تحليل الجوانب"):
+    if not api_key:
+        st.warning("الرجاء إدخال مفتاح Google API في القسم السابق أولاً.")
+    elif not absa_text:
+        st.warning("الرجاء إدخال نص.")
+    else:
+        with st.spinner("جاري تحليل الجوانب..."):
+            aspects_result = extract_aspects_with_llm(absa_text, api_key)
+            
+            if isinstance(aspects_result, list) and len(aspects_result) > 0 and "error" not in aspects_result[0]:
+                st.success("✅ اكتمل التحليل!")
+                for item in aspects_result:
+                    if "aspect" in item and "sentiment" in item:
+                        if item['sentiment'].lower() == 'positive':
+                            st.success(f"**{item['aspect']}**: {item['sentiment']} ✅")
+                        elif item['sentiment'].lower() == 'negative':
+                            st.error(f"**{item['aspect']}**: {item['sentiment']} ❌")
+                        else:
+                            st.info(f"**{item['aspect']}**: {item['sentiment']} ⚖️")
+            else:
+                st.error(f"حدث خطأ: {aspects_result}")
 # 13. مقارنة النماذج
 st.markdown("---")
 st.header("⚔️ مقارنة النماذج (McNemar Test)")
