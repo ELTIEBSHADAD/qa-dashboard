@@ -36,3 +36,20 @@ def classify_with_llm(text, api_key, max_retries=3):
             time.sleep(5) 
     
     return "Error: Max retries exceeded"
+    import json
+
+def extract_aspects_with_llm(text, api_key):
+    client = genai.Client(api_key=api_key)
+    prompt = f"""
+    Analyze the following text and extract the aspects (features mentioned) and their sentiment (positive, negative, or neutral).
+    Return ONLY a valid JSON array of objects. Example: [{{"aspect": "food", "sentiment": "positive"}}, {{"aspect": "service", "sentiment": "negative"}}]
+    Do not include markdown blocks like ```json.
+    
+    Text: {text}
+    """
+    try:
+        response = client.models.generate_content(model='gemini-3.8-flash', contents=prompt)
+        result_text = response.text.strip().replace('```json', '').replace('```', '')
+        return json.loads(result_text)
+    except Exception as e:
+        return [{"error": str(e)}]
