@@ -135,35 +135,32 @@ fig_bias = px.bar(stats['bias_data'], barmode='group', labels={'value': 'الن�
 st.plotly_chart(fig_bias, use_container_width=True)
 
 # ==========================================
-# 12. اتفاق الإنسان-الآلة
+# 12. اتفاق الإنسان-الآلة (محاكاة)
 # ==========================================
 st.markdown("---")
 st.header("🤖 اتفاق الإنسان-الآلة (GPT vs You)")
-api_key = st.text_input("أدخل Google API Key هنا (لن يتم تخزينه):", type="password")
-if st.button("🚀 تشغيل المقارنة مع الذكاء الاصطناعي"):
-    if not api_key:
-        st.warning("الرجاء إدخال مفتاح API أولاً.")
-    else:
-        with st.spinner("جاري تصنيف النصوص بواسطة Gemini..."):
-            import time
-            sample_df = df.head(5).copy()
-            llm_labels = []
-            for text in sample_df['text']:
-                llm_labels.append(classify_with_llm(text, api_key))
-                time.sleep(1)
-            sample_df['llm_label'] = llm_labels
-            st.success("✅ اكتمل التصنيف!")
-            st.dataframe(sample_df[['text', 'my_label', 'llm_label']], use_container_width=True)
-            valid_df = sample_df[sample_df['llm_label'].isin(['positive', 'negative', 'neutral', 'mixed'])]
-            if len(valid_df) > 0:
-                agreement_ai = (valid_df['my_label'] == valid_df['llm_label']).mean()
-                kappa_ai = cohen_kappa_score(valid_df['my_label'], valid_df['llm_label'])
-            else:
-                agreement_ai, kappa_ai = 0.0, 0.0
-            col1, col2 = st.columns(2)
-            col1.metric("نسبة الاتفاق", f"{agreement_ai:.1%}")
-            col2.metric("Cohen's Kappa", f"{kappa_ai:.2f}")
+st.write("يقارن هذا القسم بين تصنيفك البشري وتصنيف الذكاء الاصطناعي.")
+st.info("ℹ️ يتم عرض نتائج محاكاة لأن مفتاح API غير متوفر حالياً.")
 
+if st.button("🚀 تشغيل المقارنة (محاكاة)"):
+    import random
+    sample_df = df.head(5).copy()
+    labels = ['positive', 'negative', 'neutral', 'mixed']
+    sample_df['llm_label'] = [true_label if random.random() < 0.85 else random.choice(labels) for true_label in sample_df['my_label']]
+    
+    st.success("✅ اكتملت المحاكاة!")
+    st.dataframe(sample_df[['text', 'my_label', 'llm_label']], use_container_width=True)
+    
+    valid_df = sample_df
+    agreement_ai = (valid_df['my_label'] == valid_df['llm_label']).mean()
+    try:
+        kappa_ai = cohen_kappa_score(valid_df['my_label'], valid_df['llm_label'])
+    except:
+        kappa_ai = 0.0
+        
+    col1, col2 = st.columns(2)
+    col1.metric("نسبة الاتفاق", f"{agreement_ai:.1%}")
+    col2.metric("Cohen's Kappa", f"{kappa_ai:.2f}")
 # ==========================================
 # 13. مراجعة الأقران
 # ==========================================
