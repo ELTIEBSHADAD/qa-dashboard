@@ -213,6 +213,7 @@ st.markdown("---")
 st.header("🎯 تحليل الجوانب (ABSA) - متقدم")
 st.write("يقوم هذا القسم بتفكيك النص إلى جوانب (مثل: الطعام، الخدمة) وتحديد مشاعر كل جانب على حدة.")
 absa_text = st.text_input("أدخل نصاً لتحليله (مثال: Food is good but service is bad):", key="absa_input")
+api_key = st.text_input("أدخل Google API Key هنا (لن يتم تخزينه):", type="password")
 if st.button("🔍 تحليل الجوانب"):
     if not api_key:
         st.warning("الرجاء إدخال مفتاح Google API في القسم السابق أولاً.")
