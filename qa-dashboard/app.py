@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 from alert_engine import check_alerts 
-df = pd.read_csv('annotations.csv')
+dir_name = os.path.abspath(os.path.dirname(__file__))
+csv_path = os.path.join(dir_name, 'annotations.csv')
+df = pd.read_csv(csv_path)
 
 import plotly.express as px
 from sklearn.metrics import cohen_kappa_score
